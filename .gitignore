@@ -1,3 +1,5 @@
 .env
 nginx/certbot/conf/
 nginx/certbot/www/
+eSale-api/
+eSale-web/
