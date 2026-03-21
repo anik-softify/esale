@@ -12,7 +12,7 @@ services:
       ASPNETCORE_URLS: http://+:5000
       Infrastructure__RunDbInitialization: "true"
       Infrastructure__RunHangfireServer: "true"
-      ConnectionStrings__DefaultConnection: Server=mysql;Port=3306;Database=${MYSQL_DATABASE};User=${MYSQL_USER};Password=${MYSQL_PASSWORD};
+      ConnectionStrings__DefaultConnection: Server=mysql;Port=3306;Database=esale_central;User=${MYSQL_USER};Password=${MYSQL_PASSWORD};
       Jwt__Key: ${JWT_SECRET_KEY}
       Jwt__Issuer: eSale.Api
       Jwt__Audience: eSale.Web
@@ -55,7 +55,7 @@ services:
       - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_DATABASE: esale_central
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     command: --default-authentication-plugin=mysql_native_password

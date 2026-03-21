@@ -27,6 +27,52 @@ docker compose down
 
 - Frontend: `http://localhost`
 - Admin panel: `http://localhost/admin/products`
+- Hangfire dashboard: `http://localhost/hangfire`
+
+## Tenant Workflow
+
+### 1. Provision a tenant
+
+```bash
+curl -X POST http://localhost/api/tenants/provision \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Acme Corp"}'
+# Returns: "a1b2c3d4-..."
+```
+
+### 2. Register a user in that tenant
+
+```bash
+curl -X POST http://localhost/api/account/register \
+  -H "Content-Type: application/json" \
+  -H "X-Tenant-Id: a1b2c3d4-..." \
+  -d '{"firstName":"Anik","lastName":"Das","email":"anik@example.com","password":"MyPassword1"}'
+# Returns: JWT token
+```
+
+### 3. Login
+
+```bash
+curl -X POST http://localhost/api/account/login \
+  -H "Content-Type: application/json" \
+  -H "X-Tenant-Id: a1b2c3d4-..." \
+  -d '{"email":"anik@example.com","password":"MyPassword1"}'
+# Returns: JWT token
+```
+
+### 4. Use the API
+
+```bash
+# Create a product
+curl -X POST http://localhost/api/products \
+  -H "Content-Type: application/json" \
+  -H "X-Tenant-Id: a1b2c3d4-..." \
+  -d '{"name":"Widget","sku":"WDG-001","price":29.99,"stockQuantity":100}'
+
+# List products
+curl http://localhost/api/products \
+  -H "X-Tenant-Id: a1b2c3d4-..."
+```
 
 ## Update only frontend
 
@@ -60,7 +106,7 @@ docker compose logs -f
 
 ## Reset everything including database data
 
-Warning: this removes MySQL data.
+Warning: this removes all MySQL data including tenant databases.
 
 ```powershell
 cd E:\eSale
@@ -71,5 +117,6 @@ docker compose up -d --build
 ## Notes
 
 - The backend runs behind Nginx.
-- The admin panel already uses the frontend proxy route, so product create/list works from the UI.
+- Every API request (except tenant provisioning) requires an `X-Tenant-Id` header or a JWT with a `tenantId` claim.
+- Each tenant has its own MySQL database with isolated users and data.
 - Use the reset command only when you really want a fresh database.
